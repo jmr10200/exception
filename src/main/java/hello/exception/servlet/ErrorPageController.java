@@ -79,3 +79,18 @@ public class ErrorPageController {
 // 에러 정보 추가
 // WAS 는 에러 페이지를 단순히 다시 요청만 하는 것이 아니라, 에러 정보를 request 의 attribute 에 추가해서 넘긴다.
 // 필요하면 에러 페이지에 이렇게 전달된 에러 정보를 표시할 수 있다.
+
+
+/* DispatchType */
+// 클라이언트로부터 발생한 정상 요청인지, 에러 페이지를 출력하기위한 내부 요청인지 구분하기 위한,
+// 필터가 제공하는 옵션 : dispatchTypes
+// log.info("dispatchType={}", request.getDispatcherType());
+// 출력해보면 dispatchType=ERROR 으로 나온다.
+// 유저가 처음 요청하면 dispatchType=REQUEST 이다. 즉, 서버가 내부에서 구분할 수 있게 해준다.
+// ・javax.servlet.DispatcherType
+// public enum DispatcherType {
+// FORWARD, : 서블릿에서 다른 서블릿이나 JSP 를 호출할 때. RequestDispatcher.forward(request, response)
+// INCLUDE, : 서블릿에서 다르 서블릿이나 JSP 결과를 포함할 때. RequestDispatcher.include(request, response)
+// REQUEST, : 클라이언트 요청
+// ASYNC, : 서블릿 비동기 호출
+// ERROR : 에러 요청
