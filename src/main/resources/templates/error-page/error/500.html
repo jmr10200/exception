@@ -11,7 +11,43 @@
     <div>
         <p>오류 화면 입니다.</p>
     </div>
+    <ul>
+        <li>오류 정보</li>
+            <ul>
+                <li th:text="|timestamp: ${timestamp}|"></li>
+                <li th:text="|path: ${path}|"></li>
+                <li th:text="|status: ${status}|"></li>
+                <li th:text="|message: ${message}|"></li>
+                <li th:text="|error: ${error}|"></li>
+                <li th:text="|exception: ${exception}|"></li>
+                <li th:text="|errors: ${errors}|"></li>
+                <li th:text="|trace: ${trace}|"></li>
+            </ul>
+        <!-- 주의!
+             실무에서는 이 정보들을 노출하면 안된다!!
+             유저에게는 유저가 이해할 수 있는 간단한 에러메시지만을 보여주고,
+             에러는 서버에 로그로 남겨 로그를 확인해야 한다.
+        -->
+        </li>
+    </ul>
+
     <hr class="my-4">
 </div> <!-- /container -->
 </body>
 </html>
+<!--
+BasicErrorController 가 제공하는 기본 정보
+- timestamp: Fri Feb 05 00:00:00 KST 2021
+- status: 400
+- error: Bad Request
+- exception: org.springframework.validation.BindException
+- trace: 예외 trace
+- message: Validation failed for object='data'. Error count: 1
+- errors: Errors(BindingResult)
+- path: 클라이언트 요청 경로 (`/hello`)
+
+에러에 관한 내부정보들을 외부에 노출하는 것은 좋지않다. 보안상 문제가 될 수 있다.
+그래서 BasicErrorController 에러 컨트롤러에서 다음 에러정보를 model 에 포함할지 선택할 수 있다.
+-> application.properties 에 설정, 참조
+
+-->

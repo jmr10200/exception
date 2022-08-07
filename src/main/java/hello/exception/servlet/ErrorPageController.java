@@ -133,3 +133,6 @@ public class ErrorPageController {
 // error-400 : 4xx.html (400 에러페이지가 없지만 4xx가 있음)
 // error-500 : 500.html
 // error-ex : 500.html (예외는 500으로 처리)
+
+/* 확장: 에러 공통 처리 컨트롤러의 기능을 변경하고 싶은 경우 */
+// ErrorController 인터페이스를 상속받아서 구현하거나 BasicErrorController 상속 받아서 기능 추가하면 된다.
