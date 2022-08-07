@@ -6,7 +6,11 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-@Component
+// 스프링을 사용하기 위해 주석처리
+// 스프링은 BasicErrorController 를 빈으로 자동등록하며, /error 경로로 기본 에러페이지를 설정함
+// 즉, 개발자는 BasicErrorController 가 제공하는 룰과 우선순위에따라 에러 페이지만 등록하면 된다.
+// 정적 HTML 이면 정적 리소스, 뷰 템플릿으로 동적으로 만들고 싶으면 뷰 템플릿 경로에 만들자.
+//@Component
 public class WebServerCustomizer implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
 
     @Override
