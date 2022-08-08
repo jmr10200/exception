@@ -1,11 +1,17 @@
 package hello.exception.servlet;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 에러 페이지 컨트롤러
@@ -49,6 +55,27 @@ public class ErrorPageController {
         log.info("ERROR_SERVLET_NAME: {}", request.getAttribute(ERROR_SERVLET_NAME));
         log.info("ERROR_STATUS_CODE: {}", request.getAttribute(ERROR_STATUS_CODE));
         log.info("dispatchType={}", request.getDispatcherType());
+    }
+
+    /**
+     * API 응답 추가
+     */
+    // produces = MediaType.APPLICATION_JSON_VALUE : 미디어타입이 json 타입이면 이 메소드 호출
+    // : 클라이언트가 요청하는 HTTP Header 에서 Accept=application/json 일 때 호출
+    @RequestMapping(value = "/error-page/500", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> errorPage500Api(HttpServletRequest request, HttpServletResponse response) {
+        // 응답데이터 ResponseEntity 를 위해 Map 으로 생성, Jackson 을 이용하면 Map 을 JSON 으로 변환 가능
+        log.info("API errorPage 500");
+
+        Map<String, Object> result = new HashMap<>();
+        Exception exception = (Exception) request.getAttribute(ERROR_EXCEPTION);
+        result.put("status", request.getAttribute(ERROR_STATUS_CODE));
+        result.put("message", exception.getMessage());
+
+        Integer statusCode = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+        return new ResponseEntity(result, HttpStatus.valueOf(statusCode));
+        // ResponseEntity 를 사용해서 응답하기 때문에 메시지 컨버터가 동작하면서 클라이언트에 JSON 반환된다.
+        // HTTP Header 의 Accept 값이 application/json 가 아니면 HTML 페이지가 출력된다.
     }
 }
 /* 서블릿 예외 처리 - 에러 페이지 작동 원리 */

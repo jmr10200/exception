@@ -27,3 +27,6 @@ public class WebServerCustomizer implements WebServerFactoryCustomizer<Configura
 
     }
 }
+/* API 예외처리 */
+// HTML 의 경우, 4xx,5xx 와 같은 에러페이지만 있으면 대부분의 문제가 해결가능하다.
+// API 의 경우에는 각 에러 상황에 맞는 응답 스펙을 정하고, JSON 으로 데이터를 전달해줘야 한다.
