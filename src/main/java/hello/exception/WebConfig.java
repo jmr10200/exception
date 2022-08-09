@@ -2,14 +2,18 @@ package hello.exception;
 
 import hello.exception.filter.LogFilter;
 import hello.exception.interceptor.LogInterceptor;
+import hello.exception.resolver.MyHandlerExceptionResolver;
+import hello.exception.resolver.UserHandlerExceptionResolver;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
+import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -37,4 +41,18 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); // 에러 페이지 경로
     // -> /error-page/** 를 제거하면, error-page/500 같은 내부 호출의 경우에도 인터셉터 호출됨
     }
+
+    /**
+     * ExceptionResolver 활용 : 기본 설정을 유지하면서 추가
+     */
+    @Override
+    public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+        resolvers.add(new MyHandlerExceptionResolver());
+        // 참고 : configureHandlerExceptionResolver(...) 를 사용하면 스프링이 기본으로 등록하는
+        // ExceptionResolver 가 제거되므로 주의. extendHandlerExceptionResolver() 를 사용해야 한다.
+
+        // 사용자 에러 추가
+        resolvers.add(new UserHandlerExceptionResolver());
+    }
+
 }
