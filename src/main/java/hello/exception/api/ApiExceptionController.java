@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -65,6 +63,12 @@ public class ApiExceptionController {
         // (어노테이션을 직접 넣어야 하는데, 내가 코드를 수정할 수 없는 라이브러리의 예외 코드 같은 곳에는 적용 불가)
         // 추가로 어노테이션을 사용하기 때문에 조건에 따라 동적으로 변경하는 것도 어렵다.
         // 이때는, ResponseStatusException 예외를 사용하면 된다.
+    }
+
+    @GetMapping("/api/default-handler-ex")
+    public String defaultException(@RequestParam Integer data) {
+        // Integer data 에 문자를 입력하면 내부에서 TypeMismatchException 발생
+        return "ok";
     }
 
 }
@@ -137,3 +141,23 @@ public class ApiExceptionController {
 // 3. DefaultHandlerExceptionResolver -> 우선 순위 가장 낮다
 //    : 스프링 내부 기본 예외를 처리한다.
 
+// DefaultHandlerExceptionResolver
+// 스프링 내부에서 발생하는 스프링 예외를 해결
+// 대표적으로 파라미터 바인딩 시점에 타입이 맞지 않으면 TypeMismatchException 발생
+// 이 경우, 예외가 발생했기 때문에 그냥 두면 서블릿 컨테이너까지 에러가 올라가고, 500 발생한다.
+// 그런데 파라미터 바인딩은 대부분 클라이언트가 HTTP 요청 정보를 잘못 호출해서 발생하는 문제이다.
+// HTTP 에서는 이런 경우 HTTP 상태 코드 400 을 사용하도록 되어 있다.
+// DefaultHandlerExceptionResolver 는 이것을 500 에러가 아니라 400 에러로 변경한다.
+// 스프링 내부 에러를 어떻게 처리할지 수 많은 내용이 정의되어 있다.
+
+// 코드 확인
+// response.sendError(HttpServletResponse.SC_BAD_REQUEST)(400) -> response.sendError() 이용
+// sendError(400) 를 호출했기 때문에 WAS 에서 다시 에러페이지 /error 를 내부 요청한다.
+
+// 정리
+// HTTP 상태 코드를 변경하고, 스프링 내부 예외의 상태코드를 변경하는 기능이 있다.
+// 그런데 HandlerExceptionResolver 를 직접 사용하기에는 복잡하다.
+// API 에러응답의 경우 response 에 직접 데이터를 넣어야해서 복잡하고 번거롭다.
+// ModelAndView 를 반환해야 하는 것도 API 에는 잘 맞지 않는다.
+// 스프링은 이 문제를 해결하기 위해 @ExceptionHandler 라는 예외처리 기능을 제공한다.
+// 이것이 ExceptionHandlerExceptionResolver 이다.
