@@ -1,6 +1,7 @@
 package hello.exception.api;
 
 import hello.exception.UserException;
+import hello.exception.exception.BadRequestException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,10 @@ public class ApiExceptionController {
         private String name;
     }
 
+    @GetMapping("/api/response-status-ex1")
+    public String responseStatusEx1() {
+        throw new BadRequestException();
+    }
 }
 /* API 예외처리 - 스프링 부트 기본 에러 처리 */
 // api 예외 처리도 스프링 부트가 제공하는 기본 오류 방식을 사용할 수 있다.
@@ -108,3 +113,14 @@ public class ApiExceptionController {
 // 1.preHandle -> 2.handle(handler) -> 3.예외발생 x -> 예외전달 x -> 5. 예외 해결시도 ExceptionResolver
 // 6.render(model) 호출 -> View -> HTML 응답 -> 7.afterCompletion(ex) -> 8.정상응답
 // 참고 : ExceptionResolver 로 예외를 해결해서 postHandle() 은 호출되지 않는다.
+
+/** 스프링 API 예외처리 ExceptionResolver */
+// 스프링은 HandlerExceptionResolverComposite 에 다음 순서로 등록한다.
+// 1. ExceptionHandlerExceptionResolver
+//    : @ExceptionHandler 를 처리한다. API 예외 처리는 대부분 이 기능으로 해결한다.
+// 2. ResponseStatusExceptionResolver
+//    : HTTP 상태 코드를 지정해준다.
+//    : 예) @ResponseStatus(value = HttpStatus.NOT_FOUND)
+// 3. DefaultHandlerExceptionResolver -> 우선 순위 가장 낮다
+//    : 스프링 내부 기본 예외를 처리한다.
+
