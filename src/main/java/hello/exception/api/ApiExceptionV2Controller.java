@@ -15,11 +15,36 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 public class ApiExceptionV2Controller {
 
+    @GetMapping("/api2/members/{id}")
+    public MemberDto getMember(@PathVariable("id") String id) {
+
+        if (id.equals("ex")) {
+            throw new RuntimeException("잘못된 사용자");
+        }
+
+        if (id.equals("bad")) {
+            throw new IllegalArgumentException("잘못 입력 값");
+        }
+
+        if (id.equals("user-ex")) {
+            throw new UserException("사용자 에러");
+        }
+
+        return new MemberDto(id, "hello " + id);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String memberId;
+        private String name;
+    }
+
     // @ExceptionHandler 예외 처리 방법
     // 어노테이션을 선언하고, 해당 컨트롤러에서 처리하고 싶은 예외를 지정한다.
     // 해당 컨트롤러에서 예외가 발생하면 이 메소드가 호출된다.
     // 참고로 지정한 예외 또는 그 예외의 자식 클래스는 모두 잡을 수 있다.
-
+/*
     // 다음과 같이 복수 처리도 가능하다.
     // @ExceptionHandler({AException.class, BException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -62,35 +87,10 @@ public class ApiExceptionV2Controller {
         // RuntimeException 은 Exception 의 자식 클래스이다. 따라서 exHandle() 이 호출 된다.
         // @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) 로 HTTP 상태코드를 500 으로 응답한다.
     }
-
+*/
     // 참고 : 다음과 같이 ModelAndView 를 사용해서 HTML 을 응답하는데 사용할 수도 있다.
     // @ExceptionHandler(ViewException.class)
     // public ModelAndView ex(ViewException e) {...}
-
-    @GetMapping("/api2/members/{id}")
-    public MemberDto getMember(@PathVariable("id") String id) {
-
-        if (id.equals("ex")) {
-            throw new RuntimeException("잘못된 사용자");
-        }
-
-        if (id.equals("bad")) {
-            throw new IllegalArgumentException("잘못 입력 값");
-        }
-
-        if (id.equals("user-ex")) {
-            throw new UserException("사용자 에러");
-        }
-
-        return new MemberDto(id, "hello " + id);
-    }
-
-    @Data
-    @AllArgsConstructor
-    static class MemberDto {
-        private String memberId;
-        private String name;
-    }
 
 }
 /** 스프링 API 예외처리 ExceptionHandlerExceptionResolver : @ExceptionHandler */
